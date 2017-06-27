@@ -6,7 +6,11 @@
 
 #define MAX_LOADSTRING 100
 
-//pozycja liny dzwigu(do zmian)
+const int SPEED_X = 1;
+const int SPEED_Y = 1;
+
+
+//rope position
 struct position
 {
 	int x = 292;
@@ -22,7 +26,7 @@ struct chest
 position rope;
 chest object;
 
-// Zmienne globalne:
+// Global variables
 HINSTANCE hInst;                                // bie¿¹ce wyst¹pienie
 WCHAR szTitle[MAX_LOADSTRING];                  // Tekst paska tytu³u
 WCHAR szWindowClass[MAX_LOADSTRING];            // nazwa klasy okna g³ównego
@@ -167,12 +171,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		case VK_RIGHT:
 			if (rope.x <= 710) {
 				ClearTheRope(hWnd);
-				rope.x += 1;
+				rope.x += SPEED_X;
 				DrawTheRope(hWnd);
 				if (object.CheckTheHook)
 				{
 					ClearTheObject(hWnd);
-					object.x += 1;
+					object.x += SPEED_X;
 					DrawTheObject(hWnd);
 				}
 
@@ -181,12 +185,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		case VK_LEFT:
 			if (rope.x >= 292) {
 				ClearTheRope(hWnd);
-				rope.x -= 1;
+				rope.x -= SPEED_X;
 				DrawTheRope(hWnd);
 				if (object.CheckTheHook)
 				{
 					ClearTheObject(hWnd);
-					object.x -= 1;
+					object.x -= SPEED_X;
 					DrawTheObject(hWnd);
 				}
 			}
@@ -195,12 +199,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		case VK_UP:
 			if (rope.y >= 148) {
 				ClearTheRope(hWnd);
-				rope.y -= 2;
+				rope.y -= SPEED_Y;
 				DrawTheRope(hWnd);
 				if (object.CheckTheHook)
 				{
 					ClearTheObject(hWnd);
-					object.y -= 2;
+					object.y -= SPEED_Y;
 					DrawTheObject(hWnd);
 				}
 			}
@@ -208,12 +212,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		case VK_DOWN:
 			if (rope.y < 370) {
 				ClearTheRope(hWnd);
-				rope.y += 2;
+				rope.y += SPEED_Y;
 				DrawTheRope(hWnd);
 				if (object.CheckTheHook)
 				{
 					ClearTheObject(hWnd);
-					object.y += 2;
+					object.y += SPEED_Y;
 					DrawTheObject(hWnd);
 				}
 			}
@@ -234,7 +238,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				object.CheckTheHook = false;
 				while (object.y < 370) {
 					ClearTheObject(hWnd);
-					object.y += 1;
+					object.y += SPEED_Y;
 					DrawTheObject(hWnd);
 					Sleep(1);
 				}
