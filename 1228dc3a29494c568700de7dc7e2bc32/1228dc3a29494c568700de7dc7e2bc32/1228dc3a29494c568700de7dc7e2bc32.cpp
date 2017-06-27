@@ -26,6 +26,7 @@ chest object;
 HINSTANCE hInst;                                // bie¿¹ce wyst¹pienie
 WCHAR szTitle[MAX_LOADSTRING];                  // Tekst paska tytu³u
 WCHAR szWindowClass[MAX_LOADSTRING];            // nazwa klasy okna g³ównego
+HWND randomizeweight;
 
 // Przeka¿ dalej deklaracje funkcji do³¹czonych w tym module kodu:
 ATOM                MyRegisterClass(HINSTANCE hInstance);
@@ -130,6 +131,8 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 
    HWND hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
 	   0, 0, 900, 550, nullptr, nullptr, hInstance, nullptr);
+   
+   randomizeweight = CreateWindowEx(0, L"BUTTON", L"LOSUJ WAGE", WS_CHILD | WS_VISIBLE, 740, 100, 100, 30, hWnd, NULL, hInstance, NULL);
 
    object.x = 292 + rand() % (700 - 292 + 1);
    if (!hWnd)
@@ -215,6 +218,28 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				}
 			}
 			break;
+		case VK_SPACE:
+
+
+			if ((rope.x == object.x) && (rope.y == object.y)) {
+				if (object.waga >= 300) {
+					MessageBox(hWnd, L"Nie uda³o sie podniesc, za ciezki towar...", L"Nieudana proba podniesienia.", MB_OK);
+				}
+				else object.CheckTheHook = true;
+			}
+			break;
+		case 0x5A:
+			if ((rope.x == object.x) && (rope.y == object.y))
+			{
+				object.CheckTheHook = false;
+				while (object.y < 370) {
+					ClearTheObject(hWnd);
+					object.y += 1;
+					DrawTheObject(hWnd);
+					Sleep(1);
+				}
+			}
+			break;
 		}
 	}
 	break;
@@ -222,6 +247,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         {
             int wmId = LOWORD(wParam);
             // Analizuj zaznaczenia menu:
+			
+			if ((HWND)lParam == randomizeweight) {
+				object.waga = 1 + rand() % (400);
+				wchar_t buffer[256];
+				wsprintfW(buffer, L"%d", object.waga);
+				MessageBox(hWnd, buffer, L"Zmieniasz wage.", MB_OK);
+
+			}
             switch (wmId)
             {
             case IDM_ABOUT:
