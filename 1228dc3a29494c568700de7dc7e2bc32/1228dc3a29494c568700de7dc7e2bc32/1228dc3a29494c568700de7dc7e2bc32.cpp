@@ -6,6 +6,22 @@
 
 #define MAX_LOADSTRING 100
 
+//pozycja liny dzwigu(do zmian)
+struct position
+{
+	int x = 292;
+	int y = 350;
+};
+struct chest
+{
+	int x;
+	int y = 370;
+	bool CheckTheHook = false;
+	int waga = 100;
+};
+position rope;
+chest object;
+
 // Zmienne globalne:
 HINSTANCE hInst;                                // bie¿¹ce wyst¹pienie
 WCHAR szTitle[MAX_LOADSTRING];                  // Tekst paska tytu³u
@@ -19,7 +35,10 @@ INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
 
 //METHODS:
 void GetImage(HDC, HWND);
-
+void DrawTheRope(HWND);
+void ClearTheRope(HWND);
+void DrawTheObject(HWND);
+void ClearTheObject(HWND);
 
 
 
@@ -37,7 +56,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, NULL);
 
     // TODO: W tym miejscu umieœæ kod.
-
+	srand(time(NULL));
     // Zainicjuj ci¹gi globalne
     LoadStringW(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
     LoadStringW(hInstance, IDC_MY1228DC3A29494C568700DE7DC7E2BC32, szWindowClass, MAX_LOADSTRING);
@@ -112,6 +131,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    HWND hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
 	   0, 0, 900, 550, nullptr, nullptr, hInstance, nullptr);
 
+   object.x = 292 + rand() % (700 - 292 + 1);
    if (!hWnd)
    {
       return FALSE;
@@ -137,6 +157,67 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     switch (message)
     {
+	case WM_KEYDOWN:
+	{
+		switch ((int)wParam)
+		{
+		case VK_RIGHT:
+			if (rope.x <= 710) {
+				ClearTheRope(hWnd);
+				rope.x += 1;
+				DrawTheRope(hWnd);
+				if (object.CheckTheHook)
+				{
+					ClearTheObject(hWnd);
+					object.x += 1;
+					DrawTheObject(hWnd);
+				}
+
+			}
+			break;
+		case VK_LEFT:
+			if (rope.x >= 292) {
+				ClearTheRope(hWnd);
+				rope.x -= 1;
+				DrawTheRope(hWnd);
+				if (object.CheckTheHook)
+				{
+					ClearTheObject(hWnd);
+					object.x -= 1;
+					DrawTheObject(hWnd);
+				}
+			}
+
+			break;
+		case VK_UP:
+			if (rope.y >= 148) {
+				ClearTheRope(hWnd);
+				rope.y -= 2;
+				DrawTheRope(hWnd);
+				if (object.CheckTheHook)
+				{
+					ClearTheObject(hWnd);
+					object.y -= 2;
+					DrawTheObject(hWnd);
+				}
+			}
+			break;
+		case VK_DOWN:
+			if (rope.y < 370) {
+				ClearTheRope(hWnd);
+				rope.y += 2;
+				DrawTheRope(hWnd);
+				if (object.CheckTheHook)
+				{
+					ClearTheObject(hWnd);
+					object.y += 2;
+					DrawTheObject(hWnd);
+				}
+			}
+			break;
+		}
+	}
+	break;
     case WM_COMMAND:
         {
             int wmId = LOWORD(wParam);
@@ -160,8 +241,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             HDC hdc = BeginPaint(hWnd, &ps);
             // TODO: tutaj dodaj kod rysowania u¿ywaj¹cy elementu hdc...
 			GetImage(hdc, hWnd);
-			
-			
+			DrawTheRope(hWnd);
+			DrawTheObject(hWnd);			
 			EndPaint(hWnd, &ps);
 
 
@@ -213,4 +294,51 @@ void GetImage(HDC hdc, HWND hwnd)
 	DeleteObject(hbmImage); 
 	SelectObject(hdcNew, hbmOld);
 	DeleteDC(hdcNew);
+}
+void DrawTheRope(HWND hWnd)
+{
+	HDC hdc = GetDC(hWnd);
+	Graphics graphics(hdc);
+	Pen pen(Color(255, 0, 0, 0));
+	graphics.DrawLine(&pen, rope.x, 127, rope.x, rope.y);
+	ReleaseDC(hWnd, hdc);
+}
+
+void ClearTheRope(HWND hWnd)
+{
+	HDC hdc = GetDC(hWnd);
+	Graphics graphics(hdc);
+	Pen pen(Color(255, 255, 255, 255));
+	graphics.DrawLine(&pen, rope.x, 127, rope.x, rope.y);
+	ReleaseDC(hWnd, hdc);
+}
+
+void DrawTheObject(HWND hWnd)
+{
+	HDC hdc = GetDC(hWnd);
+	Graphics graphics(hdc);
+	Pen pen(Color(255, 0, 0, 0));
+	graphics.DrawLine(&pen, object.x - 15, object.y, object.x + 15, object.y);
+	graphics.DrawLine(&pen, object.x - 15, object.y, object.x - 15, object.y + 60);
+	graphics.DrawLine(&pen, object.x + 15, object.y, object.x + 15, object.y + 60);
+	graphics.DrawLine(&pen, object.x - 15, object.y + 60, object.x + 15, object.y + 60);
+	graphics.DrawLine(&pen, object.x - 15, object.y, object.x + 15, object.y + 60);
+	graphics.DrawLine(&pen, object.x + 15, object.y, object.x - 15, object.y + 60);
+
+	ReleaseDC(hWnd, hdc);
+}
+
+void ClearTheObject(HWND hWnd)
+{
+	HDC hdc = GetDC(hWnd);
+	Graphics graphics(hdc);
+	Pen pen(Color(255, 255, 255, 255));
+	graphics.DrawLine(&pen, object.x - 15, object.y, object.x + 15, object.y);
+	graphics.DrawLine(&pen, object.x - 15, object.y, object.x - 15, object.y + 60);
+	graphics.DrawLine(&pen, object.x + 15, object.y, object.x + 15, object.y + 60);
+	graphics.DrawLine(&pen, object.x - 15, object.y + 60, object.x + 15, object.y + 60);
+	graphics.DrawLine(&pen, object.x - 15, object.y, object.x + 15, object.y + 60);
+	graphics.DrawLine(&pen, object.x + 15, object.y, object.x - 15, object.y + 60);
+
+	ReleaseDC(hWnd, hdc);
 }

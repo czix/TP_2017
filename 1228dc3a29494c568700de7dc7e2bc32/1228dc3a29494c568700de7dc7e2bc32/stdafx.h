@@ -12,6 +12,9 @@
 #include <windows.h>
 #include <objidl.h>
 #include <gdiplus.h>
+#include <time.h>
+#include <cstdlib>
+
 using namespace Gdiplus;
 
 // Pliki nag³ówkowe œrodowiska uruchomieniowego C
