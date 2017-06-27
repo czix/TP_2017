@@ -17,6 +17,12 @@ BOOL                InitInstance(HINSTANCE, int);
 LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
 
+//METHODS:
+void GetImage(HDC, HWND);
+
+
+
+
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                      _In_opt_ HINSTANCE hPrevInstance,
                      _In_ LPWSTR    lpCmdLine,
@@ -104,7 +110,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    hInst = hInstance; // Przechowuj dojœcie wyst¹pienia w zmiennej globalnej
 
    HWND hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
-      CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, nullptr, nullptr, hInstance, nullptr);
+	   0, 0, 900, 550, nullptr, nullptr, hInstance, nullptr);
 
    if (!hWnd)
    {
@@ -153,7 +159,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             PAINTSTRUCT ps;
             HDC hdc = BeginPaint(hWnd, &ps);
             // TODO: tutaj dodaj kod rysowania u¿ywaj¹cy elementu hdc...
-            EndPaint(hWnd, &ps);
+			GetImage(hdc, hWnd);
+			
+			
+			EndPaint(hWnd, &ps);
+
+
         }
         break;
     case WM_DESTROY:
@@ -183,4 +194,23 @@ INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
         break;
     }
     return (INT_PTR)FALSE;
+}
+
+
+
+void GetImage(HDC hdc, HWND hwnd)
+{
+	HBITMAP hbmImage;
+	BITMAP bmInfo;
+	hbmImage = (HBITMAP)LoadImage(NULL, L"dzwig.bmp", IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+	HDC hdcNew = CreateCompatibleDC(NULL);
+	HBITMAP hbmOld = (HBITMAP)SelectObject(hdcNew, hbmImage);
+	GetObject(hbmImage, sizeof(bmInfo), &bmInfo);
+	hdc = GetDC(hwnd);
+	BitBlt(hdc, 50, 50, bmInfo.bmWidth, bmInfo.bmHeight, hdcNew, 0, 0, SRCCOPY);
+	ReleaseDC(hwnd, hdc);
+
+	DeleteObject(hbmImage); 
+	SelectObject(hdcNew, hbmOld);
+	DeleteDC(hdcNew);
 }
