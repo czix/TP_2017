@@ -25,6 +25,11 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     UNREFERENCED_PARAMETER(hPrevInstance);
     UNREFERENCED_PARAMETER(lpCmdLine);
 
+	//Inicjalizacja GDI+
+	GdiplusStartupInput gdiplusStartupInput;
+	ULONG_PTR           gdiplusToken;
+	GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, NULL);
+
     // TODO: W tym miejscu umieœæ kod.
 
     // Zainicjuj ci¹gi globalne
@@ -52,6 +57,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         }
     }
 
+	GdiplusShutdown(gdiplusToken);
     return (int) msg.wParam;
 }
 
